@@ -2,23 +2,33 @@ import json
 import csv
 import os
 
-def convert_json_to_csv(input_path="products_output.json", output_path="products_output.csv"):
-    if not os.path.exists(input_path):
-        print(f"[ERROR] JSON file not found → {input_path}")
-        return
+import json
+import csv
 
-    with open(input_path, "r", encoding="utf-8") as f:
+def convert_json_to_csv():
+    with open("products_output.json", "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    if not data:
-        print("[ERROR] No data inside JSON!")
-        return
+    fieldnames = [
+        "Product Title",
+        "Product Final Price",
+        "Product Rating",
+        "Seller Name",
+        "Main Image URL",
+        "Product Description",
+    ]
 
-    headers = sorted(set().union(*(item.keys() for item in data)))
-
-    with open(output_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=headers)
+    with open("products_output.csv", "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
-        writer.writerows(data)
 
-    print(f"[OK] CSV saved → {output_path}")
+        for p in data:
+            writer.writerow({
+                "Product Title": p.get("title", ""),
+                "Product Final Price": p.get("price", ""),
+                "Product Rating": p.get("rating", ""),
+                "Seller Name": p.get("seller", ""),
+                "Main Image URL": p.get("main_image", ""),
+                "Product Description": p.get("description", ""),
+            })
+
